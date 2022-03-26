@@ -1,5 +1,5 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Connection, createConnection, } from 'typeorm';
+import { Injectable, InternalServerErrorException, BadRequestException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserRepository } from './user.repository';
 import { User } from 'src/entities/user.entity';
@@ -9,17 +9,28 @@ export class UserService {
     constructor(
         private userRepo: UserRepository,
         ){}
+
+    async findOne(email: string): Promise<User | undefined> {
+        return await this.userRepo.findOne({ email: email });
+    }
+
     async createUser(body: CreateUserDto){
-            const user = new User()
-            user.name = body.name;
-            user.email = body.email;
-            const save = await this.userRepo.save(user);
+        const checkUser = await this.findOne(body.email);
+        if (checkUser) {
+            throw new BadRequestException('Já existe um usuário com esse e-mail!');
+        }
 
-            if(!save) {
-                throw new InternalServerErrorException("Houve algum erro!");
-                ;
-            }
+        const user = User.create(body);
+        
+        const save = await this.userRepo.save(user);
 
-            return save;
+        if(!save) {
+            throw new InternalServerErrorException("Houve algum erro!");
+            ;
+        }
+
+        delete save.password;
+
+        return save;
     }
 }

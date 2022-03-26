@@ -1,18 +1,33 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jw-auth.guard';
+import { User } from 'src/entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
+import { Request } from 'express';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
     constructor(
         private userService: UserService,
+        private userRepo: UserRepository,
     )
     {}
+    
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    async getProfile(
+        @Req() req: Request,
+    ): Promise<any>{
+        const user = req.user;
 
+        return user;
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get()
     async getUser(){
-        const user = {name: 'Gil', email: '.gmail.com'};
-        return user;
+        return await this.userRepo.find();
     }
 
     @Post()
