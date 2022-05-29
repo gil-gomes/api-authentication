@@ -9,4 +9,10 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('var')
+  getVariables(): any {
+    const result = process.env.DB_PORT;
+    return result;
+  }
 }

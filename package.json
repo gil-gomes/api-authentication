@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migration:run": "npm run typeorm migration:run",
-    "migration:drop": "nom run typeorm schema:drop",
+    "migration:drop": "npm run typeorm schema:drop",
     "migration:create": "npm run typeorm  migration:create -- -n",
     "seed:restart": "npm run typeorm schema:drop && npm run typeorm migration:run && npm run seed:run"
   },
@@ -45,7 +45,7 @@
     "typeorm": "^0.2.45"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.2.2",
+    "@nestjs/cli": "^8.2.6",
     "@nestjs/schematics": "^7.3.0",
     "@nestjs/testing": "^8.4.0",
     "@types/express": "^4.17.11",
